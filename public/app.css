@@ -1,0 +1,9 @@
+#imageGallery {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#formDiv {
+    margin: 0 auto;
+    width: 30%;
+}

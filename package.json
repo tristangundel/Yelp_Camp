@@ -1,0 +1,26 @@
+{
+  "name": "yelp_camp",
+  "version": "1.0.0",
+  "description": "A full stack web application where users can share, review, and comment on places they have camped. Project was built following along Colt Steele's 'Web Developer Bootcamp' course on Udemy.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tristangundel/Yelp_Camp.git"
+  },
+  "author": "Tristan Gundel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tristangundel/Yelp_Camp/issues"
+  },
+  "homepage": "https://github.com/tristangundel/Yelp_Camp#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.3",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  }
+}
