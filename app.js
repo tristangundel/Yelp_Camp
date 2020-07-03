@@ -1,51 +1,29 @@
-// require express, bodyparser, and dotenv
+// require express, mongoose, bodyparser, and dotenv
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require("mongoose");
 require('dotenv').config();
 
 // declare and set port and app variables
 const port = process.env.PORT || 3000;
 const app = express();
 
+// connect database
+mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser: true, useUnifiedTopology: true});
+
 // set view engine  and static folder for express
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
-// declare campground array for set up
-let campgrounds = [
-    {   name: "Salmon Creek",
-        image: "https://blog-assets.thedyrt.com/uploads/2018/06/freecampingspot-2000x1120.jpg"
-    },
-    {
-        name: "Granite Hill",
-        image: "https://www.familyeducation.com/sites/default/files/fe_slideshow/2010_06/Camping_Tent_1922387_H.jpg"
-    },
-    {
-        name: "Mountain Goat's Rest",
-        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTbSgMHBURX0gS4gQ5S0n05lcP_xwaDTBYQJw&usqp=CAU"
-    },
-    {
-        name: "Big Basin",
-        image: "https://www.outsideonline.com/sites/default/files/styles/img_600x600/public/2018/05/31/favorite-free-camping-apps_s.jpg?itok=_jzf7iRS"
-    },
-    {
-        name: "Big Sur",
-        image: "https://www.tripsavvy.com/thmb/ekAcrsKGhqVjsQvxnMJpjv1ymvw=/2137x1403/filters:fill(auto,1)/sunrise-camping--676019412-5b873a5a46e0fb0050f2b7e0.jpg"
-    },
-    {
-        name: "Lassin National Park",
-        image: "https://media.wzzm13.com/assets/KUSA/images/c4403859-a976-48a1-8db2-4d180817128a/c4403859-a976-48a1-8db2-4d180817128a_750x422.jpg"
-    },
-    {
-        name: "Josua Tree",
-        image: "https://koa.com/blog/images/make-tent-camping-more-comfortable.jpg?preset=blogPhoto"
-    },
-    {
-        name: "Death Valley",
-        image: "https://cdn.vox-cdn.com/thumbor/FMUIaXcnBaKK9YqdP8qtxUog150=/0x0:4741x3161/1200x800/filters:focal(1992x1202:2750x1960)/cdn.vox-cdn.com/uploads/chorus_image/image/59535149/shutterstock_625918454.0.jpg"
-    }
-]
+// schema setup
+const campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String,
+    description: String
+});
+
+const Campground = mongoose.model("Campground", campgroundSchema);
 
 // home landing page route
 app.get("/", function(req, res) {
@@ -53,24 +31,52 @@ app.get("/", function(req, res) {
     res.render("landing");
 });
 
-// campground route
+// INDEX - show all campgrounds
 app.get("/campgrounds", function(req, res) {
-    // render list of campgrounds
-    res.render("campgrounds", {campgrounds: campgrounds});
+    // retrieve all campgrounds
+    Campground.find({}, function(err, allCampgrounds){
+        if (err) {
+            console.log(err);
+        } else {
+            // render campgrounds page with all campgrounds
+            res.render("index", {campgrounds: allCampgrounds});
+        }
+    });
 });
 
+// NEW - show form to create a new campground
 app.get("/campgrounds/new", function(req, res) {
     res.render("new.ejs");
 });
 
-// add a campground route
+// CREATE - add a new campground to database
 app.post("/campgrounds", function(req, res) {
+    // get data from form and store in variables
     let name = req.body.name;
     let img = req.body.image;
-    let newCampground = {name: name, image: img};
-    campgrounds.push(newCampground);
-    res.redirect("/campgrounds");
+    let desc = req.body.description
+    let newCampground = {name: name, image: img, description: desc};
+    // create new campground and save to db
+    Campground.create(newCampground, function(err, newlyCreated){
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/campgrounds");
+        }
+    });
 });
+
+// SHOW - detail page for a single campground
+app.get("/campgrounds/:id", function(req, res){
+    // find the camprgound with the provided ID
+    Campground.findById(req.params.id, function(err, foundCampground) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("show", {campground: foundCampground});
+        }
+    });
+})
 
 // start listening on specified port
 app.listen(port, function(){
