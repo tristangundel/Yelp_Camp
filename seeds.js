@@ -37,19 +37,19 @@ function seedDB() {
                         console.log(err);
                     } else {
                         console.log("Added a Campground");
-                        Comment.create(
-                            {
-                                text: "This place was great. There was plenty of Duff beer, but I wish we had more donuts.",
-                                author: "Homer"
-                            }, function(err, comment) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                campground.comments.push(comment);
-                                campground.save();
-                                comment.save();
-                                console.log("Created a New Comment");
-                            });
+                        // Comment.create(
+                        //     {
+                        //         text: "This place was great. There was plenty of Duff beer, but I wish we had more donuts.",
+                        //         author: "Homer"
+                        //     }, function(err, comment) {
+                        //         if (err) {
+                        //             console.log(err);
+                        //         }
+                        //         campground.comments.push(comment);
+                        //         campground.save();
+                        //         comment.save();
+                        //         console.log("Created a New Comment");
+                        //     });
                     }
                 });
             });
